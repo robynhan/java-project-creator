@@ -1,0 +1,117 @@
+apply plugin: 'java'
+apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
+apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: "jacoco"
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven-publish'
+
+apply from: 'config/scripts/coverage.gradle'
+apply from: 'config/scripts/idea.gradle'
+
+group = 'org.robynhan.com'
+version = '1.0.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+    mavenCentral()
+    mavenLocal()
+}
+
+project.jar {
+    manifest {
+        attributes 'Package': "${project.group}",
+                'Implementation-Title': "${project.name}",
+                'Implementation-Version': "${version}",
+                'Implementation-Vendor': 'robynhan',
+                'Built-By': 'robynhan',
+                'Built-Date': new Date().getDateTimeString(),
+                'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
+                'Created-By': 'Java ' + System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
+    }
+}
+
+project.ext {
+    gsonVersion = '2.8.5'
+    guavaVersion = '25.1-jre'
+    guiceVersion = '4.0'
+    slf4jVersion = '1.7.25'
+    logbackVersion = '1.2.3'
+    junitVersion = '4.12'
+    mockitoVersion = '2.20.1'
+    commonsIoVersion = '2.6'
+    commonsLang3Version = '3.7'
+    freemarkerVersion = '2.3.28'
+}
+
+project.dependencies {
+    compile(
+            "com.google.code.gson:gson:$gsonVersion",
+            "com.google.guava:guava:$guavaVersion",
+            "com.google.inject:guice:$guiceVersion",
+            "org.slf4j:slf4j-api:$slf4jVersion",
+            "commons-io:commons-io:$commonsIoVersion",
+            "org.freemarker:freemarker:$freemarkerVersion",
+            "org.apache.commons:commons-lang3:$commonsLang3Version",
+    )
+
+    runtime(
+            "ch.qos.logback:logback-classic:$logbackVersion"
+    )
+
+    testCompile(
+            "junit:junit:$junitVersion",
+            "org.mockito:mockito-core:$mockitoVersion",
+    )
+}
+
+checkstyle {
+    configFile = file("$project.projectDir/config/checkstyle/sun_checks.xml")
+    toolVersion = '8.11'
+}
+
+checkstyleTest {
+    enabled = false
+}
+
+jacoco {
+    toolVersion = "0.8.1"
+}
+
+coverage {
+
+    excludeClasses = [
+            'org.robynhan.com.ProjectCreatorPlugin',
+            'org.robynhan.com.ProjectCreatorTask',
+            'org.robynhan.com.ProjectCreatorTask',
+            'org.robynhan.com.ProjectCreatorPluginExtension',
+    ]
+}
+
+check.dependsOn "coverageCheck"
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked"
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.9'
+}

@@ -1,0 +1,14 @@
+plugins {
+    id 'org.robynhan.com.gradle-project-creator'
+}
+
+apply plugin: 'org.robynhan.com.gradle-project-creator'
+
+projectCreator {
+    type = 'java'
+    directory = './src/test/output'
+    projectName = 'sampleProject'
+    groupName = 'org.robynhan.com'
+    version = '1.0.0'
+}
+

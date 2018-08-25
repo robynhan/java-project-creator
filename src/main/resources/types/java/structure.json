@@ -1,0 +1,25 @@
+{
+  "build.gradle": "templates/build.gradle.ftl",
+  "settings.gradle": "templates/settings.gradle.ftl",
+  "readme.md": "templates/readme.md.ftl",
+  "config": {
+    "checkstyle": {
+      "sun_checks.xml": "templates/config/checkstyle/sun_checks.xml"
+    },
+    "scripts": {
+      "coverage.gradle": "templates/config/scripts/coverage.gradle",
+      "idea.gradle": "templates/config/scripts/idea.gradle"
+    }
+  },
+  "src": {
+    "main": {
+      "java": {},
+      "resources": {}
+    },
+    "test": {
+      "java": {},
+      "resources": {}
+    }
+  },
+  ".gitignore": "templates/gitignore"
+}
